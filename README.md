@@ -20,9 +20,24 @@ Or install it yourself as:
 
     $ gem install dhl_ecommerce_api
 
+## Configuration
+In `config/initializers` create a `dhl_ecommerce_api.rb` config file
+```ruby
+DHLEcommerceAPI.configure do |config|
+  config.env = :sandbox
+  config.client_id = ENV["DHL_ECOMMERCE_API_CLIENT_ID"]
+  config.password = ENV["DHL_ECOMMERCE_API_PASSWORD"]
+end
+```
 ## Usage
-
-TODO: Write usage instructions here
+### Create Shipment
+```ruby
+DHLEcommerceAPI::Shipment.create(params)
+```
+### Create Pickup
+```ruby
+DHLEcommerceAPI::Pickup.create(params)
+```
 
 ## Development
 
