@@ -24,7 +24,7 @@ Or install it yourself as:
 In `config/initializers` create a `dhl_ecommerce_api.rb` config file
 ```ruby
 DHLEcommerceAPI.configure do |config|
-  config.env = :sandbox
+  config.env = ENV["DHL_ECOMMERCE_API_ENV"]
   config.client_id = ENV["DHL_ECOMMERCE_API_CLIENT_ID"]
   config.password = ENV["DHL_ECOMMERCE_API_PASSWORD"]
 end
@@ -38,6 +38,12 @@ DHLEcommerceAPI::Shipment.create(params)
 ```ruby
 DHLEcommerceAPI::Pickup.create(params)
 ```
+
+### Tracking
+```ruby
+DHLEcommerceAPI::Tracking.track(array_of_string_tracking_numbers)
+```
+
 
 ## Development
 
