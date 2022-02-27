@@ -14,7 +14,7 @@ module DHLEcommerceAPI
       # 300 - Request is successully processed with warning
       # 204 - Request is partially successful
       # 400 - Request encountered runtime errors
-
+      
       if (200..300).exclude?(response_code.to_i)
         # TODO handle base request errors
         p "Something went wrong: #{response_code}"

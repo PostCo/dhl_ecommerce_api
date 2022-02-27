@@ -1,6 +1,14 @@
 module DHLEcommerceAPI
   class Authentication < ActiveResource::Base
-    self.site = DHLEcommerceAPI::Base.site
-    self.prefix = "/rest/v1/OAuth/AccessToken?clientId=#{ENV["DHL_ECOMMERCE_API_CLIENT_ID"]}&password=#{ENV["DHL_ECOMMERCE_API_PASSWORD"]}&returnFormat=json"
+    def self.get_token
+      token = DHLEcommerceAPI.cache.read("DHLEcommerceAPIToken")
+      if token.present? 
+        return token
+      else
+        response = get(:token)
+        DHLEcommerceAPI.cache.write("DHLEcommerceAPIToken", response["token"])
+        return response["token"]
+      end
+    end
   end
 end
