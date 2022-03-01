@@ -1,6 +1,6 @@
 module DHLEcommerceAPI
   class Configuration
-    attr_accessor :client_id, :password, :env, :pickup_account_id, :soldto_account_id, :env
+    attr_accessor :client_id, :password, :env, :pickup_account_id, :sold_to_account_id, :env
   end
 
   PRODUCTION_SITE = "#"
@@ -28,6 +28,7 @@ module DHLEcommerceAPI
       end
 
       DHLEcommerceAPI::Base.site = site
+
       DHLEcommerceAPI::Authentication.site = site
       DHLEcommerceAPI::Authentication.prefix = "/rest/v1/OAuth/AccessToken?clientId=#{config.client_id}&password=#{config.password}&returnFormat=json"
     end

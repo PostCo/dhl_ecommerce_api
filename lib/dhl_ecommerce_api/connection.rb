@@ -10,16 +10,6 @@ module DHLEcommerceAPI
       json = self.format.decode(result.body)
       response_code = json.dig('bd', 'responseStatus', 'code')
       
-      # 200 - Request is successfully processed
-      # 300 - Request is successully processed with warning
-      # 204 - Request is partially successful
-      # 400 - Request encountered runtime errors
-      
-      if (200..300).exclude?(response_code.to_i)
-        # TODO handle base request errors
-        p "Something went wrong: #{response_code}"
-      end
-
       handle_response(result)
     rescue Timeout::Error => e
       raise TimeoutError.new(e.message)
