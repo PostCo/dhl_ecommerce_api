@@ -5,6 +5,7 @@ module DHLEcommerceAPI
 
   PRODUCTION_SITE = "#"
   PRE_PRODUCTION_SITE = "#"
+  BAT_SITE = "https://apitest.dhlecommerce.asia"
   SANDBOX_SITE = "https://sandbox.dhlecommerce.asia"
 
   class << self
@@ -39,6 +40,8 @@ module DHLEcommerceAPI
         PRODUCTION_SITE
       when "staging"
         PRE_PRODUCTION_SITE
+      when "bat"
+        BAT_SITE
       else
         SANDBOX_SITE
       end
