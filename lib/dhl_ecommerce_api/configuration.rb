@@ -4,8 +4,7 @@ module DHLEcommerceAPI
   end
 
   PRODUCTION_SITE = "#"
-  PRE_PRODUCTION_SITE = "#"
-  BAT_SITE = "https://apitest.dhlecommerce.asia"
+  PRE_PRODUCTION_SITE = "https://apitest.dhlecommerce.asia"
   SANDBOX_SITE = "https://sandbox.dhlecommerce.asia"
 
   class << self
@@ -14,22 +13,20 @@ module DHLEcommerceAPI
     end
 
     def after_configure
-      site = SANDBOX_SITE
-      
+      site = get_url(config.env)
+
       if defined?(Rails) && 
         # set cache
         if Rails.respond_to?(:cache) && Rails.cache.is_a?(ActiveSupport::Cache::Store)
           DHLEcommerceAPI.cache = Rails.cache
         end
-
         # set env if defined
         if Rails.respond_to?(:env)
           site = get_url(Rails.env)
         end
       end
-
+      
       DHLEcommerceAPI::Base.site = site
-
       DHLEcommerceAPI::Authentication.site = site
       DHLEcommerceAPI::Authentication.prefix = "/rest/v1/OAuth/AccessToken?clientId=#{config.client_id}&password=#{config.password}&returnFormat=json"
     end
@@ -40,8 +37,8 @@ module DHLEcommerceAPI
         PRODUCTION_SITE
       when "staging"
         PRE_PRODUCTION_SITE
-      when "bat"
-        BAT_SITE
+      when "preproduction"
+        PRE_PRODUCTION_SITE
       else
         SANDBOX_SITE
       end

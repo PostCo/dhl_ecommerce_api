@@ -1,5 +1,7 @@
 module DHLEcommerceAPI
   class Authentication < ActiveResource::Base
+    # self.prefix set in configuration.rb 
+
     def self.get_token
       token = DHLEcommerceAPI.cache.read("DHLEcommerceAPIToken")
       if token.present? 
