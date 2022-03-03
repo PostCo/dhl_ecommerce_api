@@ -21,31 +21,31 @@ module DHLEcommerceAPI
       if response_code_allows_body?(response.code.to_i) &&
           (response["Content-Length"].nil? || response["Content-Length"] != "0") &&
           !response.body.nil? && response.body.strip.size > 0
+      
+        bd = self.class.format.decode(response.body)["bd"]
+        response_status = bd["responseStatus"]
+        code = response_status["code"]
         
-        # depending on the error response from DHL, add errors to the model
-        handle_errors(response)
+        if code == "200"
+          @persisted = true
+        else
+          error_messages = response_status["messageDetails"].map{|err| err["messageDetail"]}
+          handle_errors(code, error_messages)
+          @persisted = false
+        end
 
-        json = self.class.format.decode(response.body)["bd"]
-        new_attributes = attributes.merge(json)
-
-        load(new_attributes, true, true)
-        @persisted = true
+        new_attributes = attributes.merge(bd)
+        load(new_attributes, true, @persisted)
       end
     end
 
-    def handle_errors(response)
-      json = JSON.parse(response.body)
-      status = json["manifestResponse"]["bd"]["responseStatus"]
-      code = status["code"]
-      if code != "200"
-        error_messages = status["messageDetails"].map{|err| err["messageDetail"]}
-        errors.add(:base, "#{code} - #{error_messages.join(", ")}") unless error_messages.empty? 
-      end
+    def handle_errors(code, error_messages)
+      errors.add(:base, "#{code} - #{error_messages.join(", ")}")
     end
 
     def request_data
       {
-        "manifest_request": {
+        "pickup_request": {
           "hdr": headers,
           "bd": attributes.except("response_status") # dont send responseStatus
         }
@@ -57,7 +57,7 @@ module DHLEcommerceAPI
         "message_type": "PICKUP",
         "message_date_time": DateTime.now.to_s,
         "access_token": DHLEcommerceAPI::Authentication.get_token,
-        "message_version": "1.0"
+        "message_version": "1.2"
       }
     end
 
