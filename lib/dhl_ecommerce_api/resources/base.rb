@@ -40,6 +40,8 @@ module DHLEcommerceAPI
         "handoverID"
       when "email_id"
         "emailID"
+      when "e_pod_required"
+        "ePODRequired"
       else
         key.to_s.camelize(:lower)
       end
