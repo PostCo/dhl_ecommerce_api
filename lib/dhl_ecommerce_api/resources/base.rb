@@ -36,6 +36,10 @@ module DHLEcommerceAPI
         "weightUOM"
       when "marketplace_url"
         "marketplaceURL"
+      when "handover_id"
+        "handoverID"
+      when "email_id"
+        "emailID"
       else
         key.to_s.camelize(:lower)
       end

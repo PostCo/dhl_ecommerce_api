@@ -1,7 +1,7 @@
 module DHLEcommerceAPI
-  class ShipmentCreation < Base
+  class Pickup < Base
     self.format = :json
-    self.prefix = "/rest/v3/Shipment"
+    self.prefix = "/rest/v2/Order/Shipment/Pickup"
     self.element_name = ""
     
     def initialize(attributes = {}, persisted = false)
@@ -21,11 +21,11 @@ module DHLEcommerceAPI
       if response_code_allows_body?(response.code.to_i) &&
           (response["Content-Length"].nil? || response["Content-Length"] != "0") &&
           !response.body.nil? && response.body.strip.size > 0
-        
+      
         bd = self.class.format.decode(response.body)["bd"]
         response_status = bd["responseStatus"]
         code = response_status["code"]
-
+        
         if code == "200"
           @persisted = true
         else
@@ -45,7 +45,7 @@ module DHLEcommerceAPI
 
     def request_data
       {
-        "manifest_request": {
+        "pickup_request": {
           "hdr": headers,
           "bd": attributes.except("response_status") # dont send responseStatus
         }
@@ -54,10 +54,10 @@ module DHLEcommerceAPI
     
     def headers
       {
-        "message_type": "SHIPMENT",
+        "message_type": "PICKUP",
         "message_date_time": DateTime.now.to_s,
         "access_token": DHLEcommerceAPI::Authentication.get_token,
-        "message_version": "1.0"
+        "message_version": "1.2"
       }
     end
 
@@ -75,10 +75,6 @@ module DHLEcommerceAPI
         .deep_transform_keys do |key| 
           format_key(key) # method from Base
         end.to_json
-    end
-
-    def is_pickup?
-      self.handover_method.to_i == 2
     end
   end
 end
