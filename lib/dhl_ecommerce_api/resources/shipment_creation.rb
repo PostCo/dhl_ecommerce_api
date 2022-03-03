@@ -22,25 +22,25 @@ module DHLEcommerceAPI
           (response["Content-Length"].nil? || response["Content-Length"] != "0") &&
           !response.body.nil? && response.body.strip.size > 0
         
-        # depending on the error response from DHL, add errors to the model
-        handle_errors(response)
+        bd = self.class.format.decode(response.body)["bd"]
+        response_status = bd["responseStatus"]
+        code = response_status["code"]
 
-        json = self.class.format.decode(response.body)["bd"]
-        new_attributes = attributes.merge(json)
+        if code == "200"
+          @persisted = true
+        else
+          error_messages = response_status["messageDetails"].map{|err| err["messageDetail"]}
+          handle_errors(code, error_messages)
+          @persisted = false
+        end
 
-        load(new_attributes, true, true)
-        @persisted = true
+        new_attributes = attributes.merge(bd)
+        load(new_attributes, true, @persisted)
       end
     end
 
-    def handle_errors(response)
-      json = JSON.parse(response.body)
-      status = json["manifestResponse"]["bd"]["responseStatus"]
-      code = status["code"]
-      if code != "200"
-        error_messages = status["messageDetails"].map{|err| err["messageDetail"]}
-        errors.add(:base, "#{code} - #{error_messages.join(", ")}") unless error_messages.empty? 
-      end
+    def handle_errors(code, error_messages)
+      errors.add(:base, "#{code} - #{error_messages.join(", ")}")
     end
 
     def request_data
