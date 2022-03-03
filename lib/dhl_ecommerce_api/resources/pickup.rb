@@ -1,5 +1,34 @@
 module DHLEcommerceAPI
   class Pickup < Base
+    # example_pickup_params = {
+    #   "handover_items": [
+    #     {
+    #       "pickup_date": "2022-03-05",
+    #       "pickup_start_time": "09:00",
+    #       "pickup_end_time": "18:00",
+    #       "shipment_type": "1",
+    #       "notification_email": nil,
+    #       "shipper_details": {
+    #         "company": "PostCo",
+    #         "name": "PostCo",
+    #         "email_id": nil,
+    #         "phone_number": "0169822645",
+    #         "address_line_1": "no 26 jalan 31/123, petaling jaya",
+    #         "address_line_2": nil,
+    #         "address_line_3": nil,
+    #         "city": "Kuala Lumpur",
+    #         "state": "Kuala Lumpur",
+    #         "postal_code": "57000",
+    #         "country": "MY",
+    #       },
+    #       "shipments": {
+    #         "quantity": 1,
+    #         "totalWeight": 100
+    #       }
+    #     }
+    #   ]
+    # }
+
     self.format = :json
     self.prefix = "/rest/v2/Order/Shipment/Pickup"
     self.element_name = ""

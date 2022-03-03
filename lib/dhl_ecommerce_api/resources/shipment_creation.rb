@@ -1,5 +1,54 @@
 module DHLEcommerceAPI
   class ShipmentCreation < Base
+    # example_shipment_creation_params = {
+    #   "handover_method" => 1,
+    #   "shipper_address" => { 
+    #     "company_name" => "Postal Connection",
+    #     "name" => "Er Whey",
+    #     "address1" => "Level 40, No 3, WeWork Mercu 2, Jalan Bangsar, KL Eco City",
+    #     "address2" => nil,
+    #     "address3" => nil,
+    #     "city" => "Kuala Lumpur",
+    #     "state" => "Kuala Lumpur",
+    #     "country" => "MY",
+    #     "post_code" => "59200",
+    #     "phone" => "0123456789",
+    #     "email" => nil 
+    #   },
+    #   "shipment_items" => [
+    #     { 
+    #       "consignee_address" => { 
+    #         "company_name" => "Bread History",
+    #         "name" => "Breadname",
+    #         "address1" => "NO 3 JALAN PPU 1",
+    #         "address2" => "TAMAN PERINDUSTRIAN PUCHONG UTAMA",
+    #         "address3" => nil,
+    #         "city" => "PUCHONG",
+    #         "state" => "SELANGOR",
+    #         "district" => nil,
+    #         "country" => "MY",
+    #         "post_code" => "47100",
+    #         "phone" => "0123456798",
+    #         "email" => nil 
+    #       },
+    #       "shipment_id" => "MYPTC00001",
+    #       "package_desc" => "Bread Materials",
+    #       "total_weight" => 2000,
+    #       "total_weight_uom" => "G",
+    #       "dimension_uom" => "CM",
+    #       "height" => nil,
+    #       "length" => nil,
+    #       "width" => nil,
+    #       "product_code" => "PDO",
+    #       "cod_value" => nil,
+    #       "insurance_value" => nil,
+    #       "total_value" => 300,
+    #       "currency" => "MYR",
+    #       "remarks" => nil,
+    #       "is_routing_info_required" => "Y" 
+    #     },
+    #   ],
+    # }
     self.format = :json
     self.prefix = "/rest/v3/Shipment"
     self.element_name = ""
