@@ -28,7 +28,6 @@ module DHLEcommerceAPI
       
       DHLEcommerceAPI::Base.site = site
       DHLEcommerceAPI::Authentication.site = site
-      DHLEcommerceAPI::Authentication.prefix = "/rest/v1/OAuth/AccessToken?clientId=#{config.client_id}&password=#{config.password}&returnFormat=json"
     end
 
     def get_url(env)
