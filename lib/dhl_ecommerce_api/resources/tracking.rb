@@ -16,6 +16,15 @@ module DHLEcommerceAPI
       super
     end
 
+    def self.find(arguments)
+      tracking = self.new({
+        "e_pod_required": "Y",
+        "tracking_reference_number": arguments.is_a?(Array) ? arguments : [arguments]
+      })
+      tracking.save
+      return tracking.shipment_items
+    end
+
     def create
       run_callbacks :create do
         connection.post(collection_path, formatted_request_data(request_data), self.class.headers).tap do |response|
