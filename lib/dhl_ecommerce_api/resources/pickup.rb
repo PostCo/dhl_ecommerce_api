@@ -29,7 +29,6 @@ module DHLEcommerceAPI
     #   ]
     # }
 
-    self.format = :json
     self.prefix = "/rest/v2/Order/Shipment/Pickup"
     self.element_name = ""
     
@@ -57,6 +56,9 @@ module DHLEcommerceAPI
         
         if code == "200"
           @persisted = true
+        elsif code == "204"
+          # handle partial success
+          @persisted = true
         else
           error_messages = response_status["messageDetails"].map{|err| err["messageDetail"]}
           handle_errors(code, error_messages)
@@ -64,12 +66,9 @@ module DHLEcommerceAPI
         end
 
         new_attributes = attributes.merge(bd)
+        # do a deep transform keys into snake case and symbol
         load(new_attributes, true, @persisted)
       end
-    end
-
-    def handle_errors(code, error_messages)
-      errors.add(:base, "#{code} - #{error_messages.join(", ")}")
     end
 
     def request_data
@@ -102,7 +101,7 @@ module DHLEcommerceAPI
     def formatted_request_data(request_data)
       request_data.as_json
         .deep_transform_keys do |key| 
-          format_key(key) # method from Base
+          custom_key_format(key) # method from Base
         end.to_json
     end
   end

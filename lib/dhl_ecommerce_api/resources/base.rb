@@ -17,8 +17,12 @@ module DHLEcommerceAPI
       super
     end
 
+    def handle_errors(code, error_messages)
+      errors.add(:base, "#{code} - #{error_messages.join(", ")}")
+    end
+
     # custom keys that arent following lowerCamel convention
-    def format_key(key)
+    def custom_key_format(key)
       case key
       when "shipment_id"
         "shipmentID"

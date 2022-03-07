@@ -7,7 +7,6 @@ module DHLEcommerceAPI
     #   ]
     # }
 
-    self.format = :json
     self.prefix = "/rest/v3/Tracking"
     self.element_name = ""
     
@@ -55,10 +54,6 @@ module DHLEcommerceAPI
       end
     end
 
-    def handle_errors(code, error_messages)
-      errors.add(:base, "#{code} - #{error_messages.join(", ")}")
-    end
-
     def request_data
       {
         "track_item_request": {
@@ -89,7 +84,7 @@ module DHLEcommerceAPI
     def formatted_request_data(request_data)
       request_data.as_json
         .deep_transform_keys do |key| 
-          format_key(key) # method from Base
+          custom_key_format(key) # method from Base
         end.to_json
     end
   end

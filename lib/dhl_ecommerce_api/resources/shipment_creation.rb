@@ -1,8 +1,10 @@
 module DHLEcommerceAPI
-  class ShipmentCreation < Base
+  class Shipment < Base
     self.format = :json
     self.prefix = "/rest/v3/Shipment"
     self.element_name = ""
+
+    # has_many :shipment_items, class_name: "DHLEcommerceAPI::ShipmentItem"
     
     def initialize(attributes = {}, persisted = false)
       attributes = account_ids.merge(attributes)
@@ -11,7 +13,8 @@ module DHLEcommerceAPI
 
     def create
       run_callbacks :create do
-        connection.post(collection_path, formatted_request_data(request_data), self.class.headers).tap do |response|
+        data = formatted_request_data(manifest_request)
+        connection.post(collection_path, data, self.class.headers).tap do |response|
           load_attributes_from_response(response)
         end
       end
@@ -28,6 +31,9 @@ module DHLEcommerceAPI
 
         if code == "200"
           @persisted = true
+        elsif code == "204"
+          # handle partial success
+          @persisted = false
         else
           error_messages = response_status["messageDetails"].map{|err| err["messageDetail"]}
           handle_errors(code, error_messages)
@@ -39,32 +45,28 @@ module DHLEcommerceAPI
       end
     end
 
-    def handle_errors(code, error_messages)
-      errors.add(:base, "#{code} - #{error_messages.join(", ")}")
-    end
-
-    def request_data
+    def manifest_request
       {
         "manifest_request": {
           "hdr": headers,
-          "bd": attributes.except("response_status") # dont send responseStatus
+          "bd": attributes
         }
       }
     end
     
     def headers
       {
-        "message_type": "SHIPMENT",
-        "message_date_time": DateTime.now.to_s,
-        "access_token": DHLEcommerceAPI::Authentication.get_token,
-        "message_version": "1.0"
+        message_type: "SHIPMENT",
+        message_date_time: DateTime.now.to_s,
+        access_token: DHLEcommerceAPI::Authentication.get_token,
+        message_version: "1.0"
       }
     end
 
     def account_ids
       {
-        "pickup_account_id": DHLEcommerceAPI.config.pickup_account_id,
-        "sold_to_account_id": DHLEcommerceAPI.config.sold_to_account_id,
+        pickup_account_id: DHLEcommerceAPI.config.pickup_account_id,
+        sold_to_account_id: DHLEcommerceAPI.config.sold_to_account_id,
       }
     end
 
@@ -72,13 +74,7 @@ module DHLEcommerceAPI
     # We have to write our own method to format the request data
     def formatted_request_data(request_data)
       request_data.as_json
-        .deep_transform_keys do |key| 
-          format_key(key) # method from Base
-        end.to_json
-    end
-
-    def is_pickup?
-      self.handover_method.to_i == 2
+        .deep_transform_keys {|key| custom_key_format(key)}.to_json
     end
   end
 end
