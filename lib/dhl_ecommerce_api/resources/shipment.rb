@@ -1,17 +1,19 @@
 module DHLEcommerceAPI
-  class ShipmentCreation < Base
-    self.format = :json
+  class Shipment < Base
+    # Base Shipment class
+    # info returned - delivery_confirmation_no, delivery_depot_code, primary_sort_code, secondary_sort_code
+
     self.prefix = "/rest/v3/Shipment"
     self.element_name = ""
     
-    def initialize(attributes = {}, persisted = false)
-      attributes = account_ids.merge(attributes)
-      super
-    end
+    has_many :shipment_items, class_name: "DHLEcommerceAPI::Shipment::ShipmentItem"
+    
+    validates_presence_of :handover_method
 
     def create
       run_callbacks :create do
-        connection.post(collection_path, formatted_request_data(request_data), self.class.headers).tap do |response|
+        data = formatted_request_data(manifest_request)
+        connection.post(collection_path, data, self.class.headers).tap do |response|
           load_attributes_from_response(response)
         end
       end
@@ -28,6 +30,9 @@ module DHLEcommerceAPI
 
         if code == "200"
           @persisted = true
+        elsif code == "204"
+          # handle partial success
+          @persisted = false
         else
           error_messages = response_status["messageDetails"].map{|err| err["messageDetail"]}
           handle_errors(code, error_messages)
@@ -39,52 +44,28 @@ module DHLEcommerceAPI
       end
     end
 
-    def handle_errors(code, error_messages)
-      errors.add(:base, "#{code} - #{error_messages.join(", ")}")
-    end
-
-    def request_data
+    def manifest_request
       {
-        "manifest_request": {
-          "hdr": headers,
-          "bd": attributes.except("response_status") # dont send responseStatus
+        manifest_request: {
+          hdr: headers,
+          bd: attributes_with_account_ids.deep_transform_keys {|key| key.to_s.underscore.to_sym }
         }
       }
     end
     
     def headers
       {
-        "message_type": "SHIPMENT",
-        "message_date_time": DateTime.now.to_s,
-        "access_token": DHLEcommerceAPI::Authentication.get_token,
-        "message_version": "1.0"
+        message_type: "SHIPMENT",
+        message_date_time: DateTime.now.to_s,
+        access_token: DHLEcommerceAPI::Authentication.get_token,
+        message_version: "1.0"
       }
-    end
-
-    def account_ids
-      {
-        "pickup_account_id": DHLEcommerceAPI.config.pickup_account_id,
-        "sold_to_account_id": DHLEcommerceAPI.config.sold_to_account_id,
-      }
-    end
-
-    # Since request_data isnt the same as object attributes. 
-    # We have to write our own method to format the request data
-    def formatted_request_data(request_data)
-      request_data.as_json
-        .deep_transform_keys do |key| 
-          format_key(key) # method from Base
-        end.to_json
-    end
-
-    def is_pickup?
-      self.handover_method.to_i == 2
     end
   end
 end
 
 # Examples:
-# shipment_creation_with_pickup_params = {
+# shipment_with_pickup_params = {
 #   "handoverMethod": 2,
 #   "pickupDateTime": DateTime.now.to_s,
 #   "pickupAddress": {
@@ -102,7 +83,7 @@ end
 #   },
 #   "shipmentItems": [
 #     {
-#       "shipmentID": "MYPTC0081",
+#       "shipmentID": "MYPTC0083",
 #       "packageDesc": "Laptop Sleeve",
 #       "totalWeight": 500,
 #       "totalWeightUOM": "G",
@@ -135,21 +116,8 @@ end
 #   ]
 # }
 
-# shipment_creation_with_dropoff_params = {
+# shipment_with_dropoff_params = {
 #   "handover_method" => 1,
-#   "shipper_address" => { 
-#     "company_name" => "Postal Connection",
-#     "name" => "Er Whey",
-#     "address1" => "Level 40, No 3, WeWork Mercu 2, Jalan Bangsar, KL Eco City",
-#     "address2" => nil,
-#     "address3" => nil,
-#     "city" => "Kuala Lumpur",
-#     "state" => "Kuala Lumpur",
-#     "country" => "MY",
-#     "post_code" => "59200",
-#     "phone" => "0123456789",
-#     "email" => nil 
-#   },
 #   "shipment_items" => [
 #     { 
 #       "consignee_address" => { 
@@ -166,7 +134,7 @@ end
 #         "phone" => "0123456798",
 #         "email" => nil 
 #       },
-#       "shipment_id" => "MYPTC000050",
+#       "shipment_id" => "MYPTC000102",
 #       "package_desc" => "Bread Materials",
 #       "total_weight" => 2000,
 #       "total_weight_uom" => "G",

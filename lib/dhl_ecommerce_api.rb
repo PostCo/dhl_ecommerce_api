@@ -11,6 +11,8 @@ module DHLEcommerceAPI
   require "dhl_ecommerce_api/resources/base"
   require "dhl_ecommerce_api/resources/authentication"
 
-  require "dhl_ecommerce_api/resources/shipment_creation"
+  require "dhl_ecommerce_api/resources/shipment"
   require "dhl_ecommerce_api/resources/pickup"
+
+  require "dhl_ecommerce_api/resources/tracking"
 end

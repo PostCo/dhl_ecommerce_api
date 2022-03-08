@@ -1,6 +1,13 @@
 # frozen_string_literal: true
 
+require "webmock/rspec"
+require "pry"
+
 require "dhl_ecommerce_api"
+require "resources/authentication"
+require "resources/shipment"
+
+# WebMock.disable_net_connect!(allow_localhost: true)
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure
@@ -11,5 +18,12 @@ RSpec.configure do |config|
 
   config.expect_with :rspec do |c|
     c.syntax = :expect
+  end
+  
+  # Set test DHL env
+  DHLEcommerceAPI.configure do |config|
+    config.client_id = "test"
+    config.password = "test"
+    config.env = "development"
   end
 end

@@ -5,11 +5,9 @@ module DHLEcommerceAPI
         payload[:method] = method
         payload[:request_uri] = "#{site.scheme}://#{site.host}:#{site.port}#{path}"
         payload[:result] = http.send(method, path, *arguments)
+        # debug outgoing request here if needed
       end
 
-      json = self.format.decode(result.body)
-      response_code = json.dig('bd', 'responseStatus', 'code')
-      
       handle_response(result)
     rescue Timeout::Error => e
       raise TimeoutError.new(e.message)
