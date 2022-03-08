@@ -1,6 +1,7 @@
 module DHLEcommerceAPI
   class Base < ActiveResource::Base
-    self.format = :json
+    # info returned - delivery_confirmation_no, delivery_depot_code, primary_sort_code, secondary_sort_code
+
     self.include_format_in_path = false
     self.connection_class = Connection
 
@@ -13,7 +14,13 @@ module DHLEcommerceAPI
 
     # by default convert to snake_case when initializing
     def load(attributes, remove_root = false, persisted = false)
-      attributes.deep_transform_keys! { |k| k.to_s.underscore }
+      # convert loaded attributes to underscore, then symbolize
+      attributes.deep_transform_keys! { |k| k.to_s.underscore.to_sym }
+
+      # merge default_attrs(symbols) with incoming attributes
+      if defined?(self.class::DEFAULT_ATTRIBUTES)
+        attributes = self.class::DEFAULT_ATTRIBUTES.merge(attributes)
+      end
       super
     end
 

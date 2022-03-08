@@ -1,11 +1,15 @@
 module DHLEcommerceAPI
   class Shipment < Base
-    self.format = :json
+    # Base Shipment class
+    # info returned - delivery_confirmation_no, delivery_depot_code, primary_sort_code, secondary_sort_code
+
     self.prefix = "/rest/v3/Shipment"
     self.element_name = ""
-
+    
     has_many :shipment_items, class_name: "DHLEcommerceAPI::ShipmentItem"
     
+    validates_presence_of :handover_method
+
     def initialize(attributes = {}, persisted = false)
       attributes = account_ids.merge(attributes)
       super
@@ -80,72 +84,59 @@ module DHLEcommerceAPI
 end
 
 # Examples:
-shipment_with_pickup_params = {
-  "handoverMethod": 2,
-  "pickupDateTime": DateTime.now.to_s,
-  "pickupAddress": {
-    "companyName": "Pickup From Company",
-    "name": "Pickup From Name",
-    "address1": "Holistic Pharmacy PostCo, 55, Jalan Landak",
-    "address2": "",
-    "address3": "",
-    "city": " Kuala Lumpur",
-    "state": " Kuala Lumpur",
-    "postCode": "55100",
-    "country": "MY",
-    "phone": "0169822645",
-    "email": "erwhey@postco.co"
-  },
-  "shipmentItems": [
-    {
-      "shipmentID": "MYPTC0082",
-      "packageDesc": "Laptop Sleeve",
-      "totalWeight": 500,
-      "totalWeightUOM": "G",
-      "dimensionUOM": "CM",
-      "height": nil,
-      "length": nil,
-      "width": nil,
-      "productCode": "PDO",
-      "codValue": nil,
-      "insuranceValue": nil,
-      "totalValue": 300,
-      "currency": "MYR",
-      "remarks": nil,
-      "isRoutingInfoRequired": "Y",
-      "consigneeAddress": {
-        "companyName": "Sleeve Company",
-        "name": "Sleeve Sdn Bhd",
-        "address1": "No. 3, Jalan Bangsar, Kampung Haji Abdullah Hukum",
-        "address2": nil,
-        "address3": nil,
-        "city": "Kuala Lumpur",
-        "state": "Kuala Lumpur",
-        "district": nil,
-        "country": "MY",
-        "postCode": "59200",
-        "phone": "0169822645",
-        "email": nil
-      }
-    },
-  ]
-}
+# shipment_with_pickup_params = {
+#   "handoverMethod": 2,
+#   "pickupDateTime": DateTime.now.to_s,
+#   "pickupAddress": {
+#     "companyName": "Pickup From Company",
+#     "name": "Pickup From Name",
+#     "address1": "Holistic Pharmacy PostCo, 55, Jalan Landak",
+#     "address2": "",
+#     "address3": "",
+#     "city": " Kuala Lumpur",
+#     "state": " Kuala Lumpur",
+#     "postCode": "55100",
+#     "country": "MY",
+#     "phone": "0169822645",
+#     "email": "erwhey@postco.co"
+#   },
+#   "shipmentItems": [
+#     {
+#       "shipmentID": "MYPTC0083",
+#       "packageDesc": "Laptop Sleeve",
+#       "totalWeight": 500,
+#       "totalWeightUOM": "G",
+#       "dimensionUOM": "CM",
+#       "height": nil,
+#       "length": nil,
+#       "width": nil,
+#       "productCode": "PDO",
+#       "codValue": nil,
+#       "insuranceValue": nil,
+#       "totalValue": 300,
+#       "currency": "MYR",
+#       "remarks": nil,
+#       "isRoutingInfoRequired": "Y",
+#       "consigneeAddress": {
+#         "companyName": "Sleeve Company",
+#         "name": "Sleeve Sdn Bhd",
+#         "address1": "No. 3, Jalan Bangsar, Kampung Haji Abdullah Hukum",
+#         "address2": nil,
+#         "address3": nil,
+#         "city": "Kuala Lumpur",
+#         "state": "Kuala Lumpur",
+#         "district": nil,
+#         "country": "MY",
+#         "postCode": "59200",
+#         "phone": "0169822645",
+#         "email": nil
+#       }
+#     },
+#   ]
+# }
 
 # shipment_with_dropoff_params = {
 #   "handover_method" => 1,
-#   "shipper_address" => { 
-#     "company_name" => "Postal Connection",
-#     "name" => "Er Whey",
-#     "address1" => "Level 40, No 3, WeWork Mercu 2, Jalan Bangsar, KL Eco City",
-#     "address2" => nil,
-#     "address3" => nil,
-#     "city" => "Kuala Lumpur",
-#     "state" => "Kuala Lumpur",
-#     "country" => "MY",
-#     "post_code" => "59200",
-#     "phone" => "0123456789",
-#     "email" => nil 
-#   },
 #   "shipment_items" => [
 #     { 
 #       "consignee_address" => { 
@@ -162,7 +153,7 @@ shipment_with_pickup_params = {
 #         "phone" => "0123456798",
 #         "email" => nil 
 #       },
-#       "shipment_id" => "MYPTC000050",
+#       "shipment_id" => "MYPTC000102",
 #       "package_desc" => "Bread Materials",
 #       "total_weight" => 2000,
 #       "total_weight_uom" => "G",

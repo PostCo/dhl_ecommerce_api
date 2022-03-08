@@ -1,5 +1,9 @@
 module DHLEcommerceAPI
   class Pickup < Base
+    # This is a one-off pickup request. 
+    # It simply tells DHL to pickup items from the shipper_details address.
+    # Used in conjunction with the Shipment::Dropoff class. 
+
     # example_pickup_params = {
     #   "handover_items": [
     #     {
