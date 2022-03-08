@@ -37,7 +37,8 @@ end
 ## Create Shipment with Pickup
 [DHL Shipment Documentation](https://sandbox.dhlecommerce.asia/API/docs/v2/pickup.html)
 ```ruby
-shipment_with_pickup_params = {
+# Shipment::Pickup params
+{
   "pickup_date_time": DateTime.now.to_s,
   "pickup_address": {
     "company_name": "Pickup From Company",
@@ -74,15 +75,18 @@ shipment_with_pickup_params = {
     },
   ]
 }
+```
 
-shipment = DHLEcommerceAPI::Shipment::Pickup.create(shipment_with_pickup_params)
+```ruby
+DHLEcommerceAPI::Shipment::Pickup.create(params)
 ```
 
 
 ## Create Shipment w/o Pickup
 Create a Shipment in DHLs system only. Used when we want to create a Shipment but not book a pickup. I.e. Generate the Shipment label for customers to print. (Use in conjunction with Pickup API.)
 ```ruby
-shipment_with_dropoff_params = {
+# Shipment::Dropoff params
+{
   "shipment_items" => [
     { 
       "shipment_id" => "MYPTC00002", # unique
@@ -108,7 +112,10 @@ shipment_with_dropoff_params = {
     }
   ]
 }
-shipment = DHLEcommerceAPI::Shipment::Dropoff.create(shipment_with_dropoff_params)
+```
+
+```ruby
+DHLEcommerceAPI::Shipment::Dropoff.create(params)
 ```
 
 ## Create Pickup
@@ -117,7 +124,8 @@ DHL will send a courier to pickup parcels from the `shipper_details` address. Th
 [DHL Pickup Documentation](https://sandbox.dhlecommerce.asia/API/docs/v2/pickup.html)
 
 ```ruby
-example_pickup_params = {
+# Pickup params
+{
   "handover_items": [
     {
       "pickup_date": "2022-03-09",
@@ -141,19 +149,27 @@ example_pickup_params = {
     }
   ]
 }
+```
+```ruby
 DHLEcommerceAPI::Pickup.create(params)
 ```
 ## Tracking
 [DHL Tracking Documentation](https://sandbox.dhlecommerce.asia/API/docs/v2/pickup.html)
 ```ruby
-DHLEcommerceAPI::Tracking.find('MYPOS0001') # => [ShipmentItem]
-# or
-DHLEcommerceAPI::Tracking.find(['MYPOS0001', 'MYPOS0002']) # => [...ShipmentItems]
+DHLEcommerceAPI::Tracking.find('MYPOS0001') 
+# => [ShipmentItem]
+```
+
+```ruby
+DHLEcommerceAPI::Tracking.find(['MYPOS0001', 'MYPOS0002']) 
+# => [...ShipmentItems]
 ```
 
 
-## Development
+___
 
+
+## Development
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
 
 To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and the created tag, and push the `.gem` file to [rubygems.org](https://rubygems.org).
