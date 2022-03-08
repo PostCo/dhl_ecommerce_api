@@ -78,8 +78,8 @@ end
 #     "state": " Kuala Lumpur",
 #     "postCode": "55100",
 #     "country": "MY",
-#     "phone": "0169822645",
-#     "email": "erwhey@postco.co"
+#     "phone": "0123456789",
+#     "email": "hello@example.com"
 #   },
 #   "shipmentItems": [
 #     {
