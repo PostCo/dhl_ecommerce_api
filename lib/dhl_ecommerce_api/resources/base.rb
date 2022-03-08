@@ -24,8 +24,27 @@ module DHLEcommerceAPI
       super
     end
 
+
+    def attributes_with_account_ids
+      account_ids.merge(attributes)
+    end
+
+    def account_ids
+      {
+        pickup_account_id: DHLEcommerceAPI.config.pickup_account_id,
+        sold_to_account_id: DHLEcommerceAPI.config.sold_to_account_id,
+      }
+    end
+
     def handle_errors(code, error_messages)
       errors.add(:base, "#{code} - #{error_messages.join(", ")}")
+    end
+    
+    # Since request_data isnt the same as object attributes. 
+    # We have to write our own method to format the request data
+    def formatted_request_data(request_data)
+      request_data.as_json
+        .deep_transform_keys {|key| custom_key_format(key)}.to_json
     end
 
     # custom keys that arent following lowerCamel convention

@@ -5,6 +5,7 @@ require "pry"
 
 require "dhl_ecommerce_api"
 require "resources/authentication"
+require "resources/shipment"
 
 # WebMock.disable_net_connect!(allow_localhost: true)
 

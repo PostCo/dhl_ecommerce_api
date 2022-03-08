@@ -17,11 +17,11 @@ module DHLEcommerceAPI
 
     def self.find(arguments)
       tracking = self.new({
-        "e_pod_required": "Y",
-        "tracking_reference_number": arguments.is_a?(Array) ? arguments : [arguments]
+        e_pod_required: "Y",
+        tracking_reference_number: arguments.is_a?(Array) ? arguments : [arguments]
       })
       tracking.save
-      return tracking.shipment_items
+      return tracking.shipment_items.presence || []
     end
 
     def create
@@ -36,48 +36,45 @@ module DHLEcommerceAPI
       if response_code_allows_body?(response.code.to_i) &&
           (response["Content-Length"].nil? || response["Content-Length"] != "0") &&
           !response.body.nil? && response.body.strip.size > 0
-      
+        
         bd = self.class.format.decode(response.body)["bd"]
         response_status = bd["responseStatus"]
         code = response_status["code"]
 
         if code == "200"
           @persisted = true
+        elsif code == "204"
+          # handle partial success
+          @persisted = false
         else
           error_messages = response_status["messageDetails"].map{|err| err["messageDetail"]}
           handle_errors(code, error_messages)
           @persisted = false
         end
-
+        
         new_attributes = attributes.merge(bd)
         load(new_attributes, true, @persisted)
       end
     end
-
+    
     def request_data
       {
-        "track_item_request": {
-          "hdr": headers,
-          "bd": attributes.except("response_status") # dont send responseStatus
+        track_item_request: {
+          hdr: headers,
+          bd: attributes.except("response_status") # dont send responseStatus
         }
       }
     end
     
     def headers
       {
-        "message_type": "TRACKITEM",
-        "message_date_time": DateTime.now.to_s,
-        "access_token": DHLEcommerceAPI::Authentication.get_token,
-        "message_version": "1.0"
+        message_type: "TRACKITEM",
+        message_date_time: DateTime.now.to_s,
+        access_token: DHLEcommerceAPI::Authentication.get_token,
+        message_version: "1.0"
       }
     end
 
-    def account_ids
-      {
-        "pickup_account_id": DHLEcommerceAPI.config.pickup_account_id,
-        "sold_to_account_id": DHLEcommerceAPI.config.sold_to_account_id,
-      }
-    end
 
     # Since request_data isnt the same as object attributes. 
     # We have to write our own method to format the request data

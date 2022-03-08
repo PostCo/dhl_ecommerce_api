@@ -1,5 +1,5 @@
 module DHLEcommerceAPI
-  class Tracking::ShipmentItem::Event < Base
+  class Event < Base
     STATUS_CODES = {
       "71005": "awaiting_parcel_handover_to_dhl_data_submitted",
       "77123": "awaiting_parcel_handover_to_dhl_shipment_data_received",
@@ -13,8 +13,14 @@ module DHLEcommerceAPI
       "77093": "successfully_delivered",
     }
 
+    def initialize(attributes = {}, persisted = false)
+      
+      super
+    end
+
     def status_slug
-      STATUS_CODES[status]
+      binding.pry
+      STATUS_CODES[status.to_sym]
     end
   end
 end

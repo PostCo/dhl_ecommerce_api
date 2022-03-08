@@ -6,14 +6,9 @@ module DHLEcommerceAPI
     self.prefix = "/rest/v3/Shipment"
     self.element_name = ""
     
-    has_many :shipment_items, class_name: "DHLEcommerceAPI::ShipmentItem"
+    has_many :shipment_items, class_name: "DHLEcommerceAPI::Shipment::ShipmentItem"
     
     validates_presence_of :handover_method
-
-    def initialize(attributes = {}, persisted = false)
-      attributes = account_ids.merge(attributes)
-      super
-    end
 
     def create
       run_callbacks :create do
@@ -51,9 +46,9 @@ module DHLEcommerceAPI
 
     def manifest_request
       {
-        "manifest_request": {
-          "hdr": headers,
-          "bd": attributes
+        manifest_request: {
+          hdr: headers,
+          bd: attributes_with_account_ids.deep_transform_keys {|key| key.to_s.underscore.to_sym }
         }
       }
     end
@@ -65,20 +60,6 @@ module DHLEcommerceAPI
         access_token: DHLEcommerceAPI::Authentication.get_token,
         message_version: "1.0"
       }
-    end
-
-    def account_ids
-      {
-        pickup_account_id: DHLEcommerceAPI.config.pickup_account_id,
-        sold_to_account_id: DHLEcommerceAPI.config.sold_to_account_id,
-      }
-    end
-
-    # Since request_data isnt the same as object attributes. 
-    # We have to write our own method to format the request data
-    def formatted_request_data(request_data)
-      request_data.as_json
-        .deep_transform_keys {|key| custom_key_format(key)}.to_json
     end
   end
 end
