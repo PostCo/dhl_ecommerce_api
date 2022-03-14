@@ -22,8 +22,6 @@ module DHLEcommerceAPI
       },
       shipment_items: []
     }
-
-    validates_presence_of :pickup_date_time
   end
 end
 
