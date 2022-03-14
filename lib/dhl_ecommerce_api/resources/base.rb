@@ -24,7 +24,6 @@ module DHLEcommerceAPI
       super
     end
 
-
     def attributes_with_account_ids
       account_ids.merge(attributes)
     end
