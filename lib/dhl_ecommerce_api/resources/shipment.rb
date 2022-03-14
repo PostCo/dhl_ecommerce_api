@@ -6,8 +6,6 @@ module DHLEcommerceAPI
     self.prefix = "/rest/v3/Shipment"
     self.element_name = ""
     
-    has_many :shipment_items, class_name: "DHLEcommerceAPI::Shipment::ShipmentItem"
-    
     validates_presence_of :handover_method
 
     def create
