@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    dhl_ecommerce_api (0.1.1)
+    dhl_ecommerce_api (0.1.4)
       activeresource (>= 4.1.0, < 6.0.0)
 
 GEM

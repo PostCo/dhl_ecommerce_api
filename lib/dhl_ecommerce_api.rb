@@ -14,7 +14,7 @@ module DHLEcommerceAPI
   require "dhl_ecommerce_api/resources/shipment"
   require "dhl_ecommerce_api/resources/shipment/pickup"
   require "dhl_ecommerce_api/resources/shipment/dropoff"
-  require "dhl_ecommerce_api/resources/shipment/shipment_item"
+  # require "dhl_ecommerce_api/resources/shipment/shipment_item"
   
   require "dhl_ecommerce_api/resources/pickup"
 
