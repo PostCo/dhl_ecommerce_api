@@ -18,7 +18,6 @@ module DHLEcommerceAPI
     end
 
     def status_slug
-      binding.pry
       STATUS_CODES[status.to_sym]
     end
   end

@@ -1,6 +1,8 @@
 module DHLEcommerceAPI
   # Component item
   class Shipment::ShipmentItem < Base
+    self.element_name = ""
+
     # add some validations?
     DEFAULT_ATTRIBUTES = { 
       shipment_id: nil,
