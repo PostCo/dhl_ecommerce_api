@@ -1,12 +1,5 @@
 module DHLEcommerceAPI
   class Tracking < Base
-    # example_tracking_params = {
-    #   "e_pod_required": "Y", 
-    #   "trackingReferenceNumber": [
-    #       "MYPTC00012", "MYPTC00013"
-    #   ]
-    # }
-
     self.prefix = "/rest/v3/Tracking"
     self.element_name = ""
     
@@ -17,16 +10,17 @@ module DHLEcommerceAPI
 
     def self.find(arguments)
       tracking = self.new({
-        e_pod_required: "Y",
-        tracking_reference_number: arguments.is_a?(Array) ? arguments : [arguments]
+        "ePODRequired": "Y",
+        "trackingReferenceNumber": arguments.is_a?(Array) ? arguments : [arguments]
       })
       tracking.save
+        
       return tracking.shipment_items.presence || []
     end
 
     def create
       run_callbacks :create do
-        connection.post(collection_path, formatted_request_data(request_data), self.class.headers).tap do |response|
+        connection.post(collection_path, request_data.to_json, self.class.headers).tap do |response|
           load_attributes_from_response(response)
         end
       end
@@ -52,37 +46,38 @@ module DHLEcommerceAPI
           @persisted = false
         end
         
-        new_attributes = attributes.merge(bd)
+        new_attributes = attributes.merge({response: JSON.parse(response.body)})
+        new_attributes = new_attributes.merge({shipment_items: bd["shipmentItems"]})
+        
         load(new_attributes, true, @persisted)
       end
     end
     
     def request_data
       {
-        track_item_request: {
-          hdr: headers,
-          bd: attributes.except("response_status") # dont send responseStatus
+        "trackItemRequest": {
+          "hdr": headers,
+          "bd": attributes.except("response_status") # dont send responseStatus
         }
       }
     end
     
     def headers
       {
-        message_type: "TRACKITEM",
-        message_date_time: DateTime.now.to_s,
-        access_token: DHLEcommerceAPI::Authentication.get_token,
-        message_version: "1.0"
+        "messageType": "TRACKITEM",
+        "messageDateTime": DateTime.now.to_s,
+        "accessToken": DHLEcommerceAPI::Authentication.get_token,
+        "messageVersion": "1.0"
       }
-    end
-
-
-    # Since request_data isnt the same as object attributes. 
-    # We have to write our own method to format the request data
-    def formatted_request_data(request_data)
-      request_data.as_json
-        .deep_transform_keys do |key| 
-          custom_key_format(key) # method from Base
-        end.to_json
     end
   end
 end
+
+=begin
+example_tracking_params = {
+  "ePODRequired": "Y", 
+  "trackingReferenceNumber": [
+      "MYPTC00012", "MYPTC00013"
+  ]
+}
+=end

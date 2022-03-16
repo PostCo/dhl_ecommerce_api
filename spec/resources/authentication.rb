@@ -27,7 +27,7 @@ RSpec.describe DHLEcommerceAPI::Authentication, type: :resource do
           'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
           'User-Agent'=>'Ruby'
           }).
-        to_return(status: 200, body:stubbed_response.to_json, headers: {})
+        to_return(status: 200, body: stubbed_response.to_json, headers: {})
       end
       it "returns the token" do
         expect(DHLEcommerceAPI::Authentication.get_token).to eq("stubbed_token")

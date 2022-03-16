@@ -5,7 +5,6 @@ module DHLEcommerceAPI
         payload[:method] = method
         payload[:request_uri] = "#{site.scheme}://#{site.host}:#{site.port}#{path}"
         payload[:result] = http.send(method, path, *arguments)
-        # debug outgoing request here if needed
       end
 
       handle_response(result)

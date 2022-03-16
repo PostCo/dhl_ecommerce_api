@@ -9,7 +9,8 @@ module DHLEcommerceAPI
     
     def create
       run_callbacks :create do
-        connection.post(collection_path, formatted_request_data(pickup_request), self.class.headers).tap do |response|
+        connection.post(collection_path, pickup_request.to_json, self.class.headers).tap do |response|
+          self.id = id_from_response(response)
           load_attributes_from_response(response)
         end
       end
@@ -35,56 +36,58 @@ module DHLEcommerceAPI
           @persisted = false
         end
 
-        new_attributes = attributes.merge(bd)
+        new_attributes = attributes.merge({response: JSON.parse(response.body)})
+  
         load(new_attributes, true, @persisted)
       end
     end
 
     def pickup_request
       {
-        pickup_request: {
-          hdr: headers,
-          bd: attributes_with_account_ids.deep_transform_keys {|key| key.to_s.underscore.to_sym }
+        "pickupRequest": {
+          "hdr": headers,
+          "bd": attributes_with_account_ids
         }
       }
     end
     
     def headers
       {
-        message_type: "PICKUP",
-        message_date_time: DateTime.now.to_s,
-        access_token: DHLEcommerceAPI::Authentication.get_token,
-        message_version: "1.2"
+        "messageType": "PICKUP",
+        "messageDateTime": DateTime.now.to_s,
+        "accessToken": DHLEcommerceAPI::Authentication.get_token,
+        "messageVersion": "1.2"
       }
     end
   end
 end
-
-# example_pickup_params = {
-#   "handover_items": [
-#     {
-#       "pickup_date": "2022-03-09",
-#       "pickup_start_time": "09:00",
-#       "pickup_end_time": "18:00",
-#       "shipment_type": "1",
-#       "notification_email": nil,
-#       "shipper_details": {
-#         "company": "PostCo",
-#         "name": "PostCo",
-#         "email_id": nil,
-#         "phone_number": "0169822645",
-#         "address_line_1": "no 26 jalan 31/123, petaling jaya",
-#         "address_line_2": nil,
-#         "address_line_3": nil,
-#         "city": "Kuala Lumpur",
-#         "state": "Kuala Lumpur",
-#         "postal_code": "57000",
-#         "country": "MY",
-#       },
-#       "shipments": {
-#         "quantity": 1,
-#         "totalWeight": 100
-#       }
-#     }
-#   ]
-# }
+=begin
+pickup_params = {
+  "handoverItems": [
+    {
+      "pickupDate": "2022-03-17",
+      "pickupStartTime": "09:00",
+      "pickupEndTime": "18:00",
+      "shipmentType": "1",
+      "notificationEmail": nil,
+      "shipperDetails": {
+        "company": "PostCo",
+        "name": "PostCo",
+        "emailID": nil,
+        "phoneNumber": "0169822645",
+        "addressLine1": "no 26 jalan 31/123, petaling jaya",
+        "addressLine2": nil,
+        "addressLine3": nil,
+        "city": "Kuala Lumpur",
+        "state": "Kuala Lumpur",
+        "postalCode": "57000",
+        "country": "MY",
+      },
+      "shipments": {
+        "quantity": 1,
+        "totalWeight": 100
+      }
+    }
+  ]
+}
+=end

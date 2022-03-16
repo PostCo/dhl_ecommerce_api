@@ -9,16 +9,10 @@ module DHLEcommerceAPI
   require "dhl_ecommerce_api/connection"
   
   require "dhl_ecommerce_api/resources/base"
+  
   require "dhl_ecommerce_api/resources/authentication"
 
-  require "dhl_ecommerce_api/resources/shipment"
-  require "dhl_ecommerce_api/resources/shipment_with_pickup"
-  require "dhl_ecommerce_api/resources/shipment_with_dropoff"
-  
-  require "dhl_ecommerce_api/resources/shipment/shipment_item"
-  require "dhl_ecommerce_api/resources/shipment/shipment_item/consignee_address"
-  
+  require "dhl_ecommerce_api/resources/shipment"  
   require "dhl_ecommerce_api/resources/pickup"
-
   require "dhl_ecommerce_api/resources/tracking"
 end
