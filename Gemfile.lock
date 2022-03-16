@@ -1,14 +1,14 @@
 PATH
   remote: .
   specs:
-    dhl_ecommerce_api (0.1.13)
+    dhl_ecommerce_api (0.1.14)
       activeresource (>= 4.1.0, < 6.0.0)
 
 GEM
   remote: https://rubygems.org/
   specs:
-    activemodel (6.1.4.6)
-      activesupport (= 6.1.4.6)
+    activemodel (6.1.5)
+      activesupport (= 6.1.5)
     activemodel-serializers-xml (1.0.2)
       activemodel (> 5.x)
       activesupport (> 5.x)
@@ -17,7 +17,7 @@ GEM
       activemodel (>= 5.0, < 7)
       activemodel-serializers-xml (~> 1.0)
       activesupport (>= 5.0, < 7)
-    activesupport (6.1.4.6)
+    activesupport (6.1.5)
       concurrent-ruby (~> 1.0, >= 1.0.2)
       i18n (>= 1.6, < 2)
       minitest (>= 5.1)
