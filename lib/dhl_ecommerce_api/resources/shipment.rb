@@ -10,8 +10,8 @@ module DHLEcommerceAPI
 
     def create
       run_callbacks :create do
-        data = formatted_request_data(manifest_request)
-        connection.post(collection_path, data, self.class.headers).tap do |response|
+        data = formatted_request_data(manifest_request).deep_transform_keys{|key| custom_key_format(key)}
+        connection.post(collection_path, data.to_json, self.class.headers).tap do |response|
           load_attributes_from_response(response)
         end
       end

@@ -42,13 +42,12 @@ module DHLEcommerceAPI
     # Since request_data isnt the same as object attributes. 
     # We have to write our own method to format the request data
     def formatted_request_data(request_data)
-      request_data.as_json
-        .deep_transform_keys {|key| custom_key_format(key)}.to_json
+      request_data.as_json.deep_transform_keys {|key| custom_key_format(key)}
     end
 
     # custom keys that arent following lowerCamel convention
     def custom_key_format(key)
-      case key
+      case key.to_s
       when "shipment_id"
         "shipmentID"
       when "total_weight_uom"
