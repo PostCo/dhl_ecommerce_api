@@ -27,16 +27,21 @@ module DHLEcommerceAPI
         if code == "200"
           @persisted = true
         elsif code == "204"
-          # handle partial success
           @persisted = false
         else
           error_messages = response_status["messageDetails"].map{|err| err["messageDetail"]}
           handle_errors(code, error_messages)
           @persisted = false
         end
-
+        
+        # service level
         new_attributes = attributes.merge({response: JSON.parse(response.body)})
-  
+
+        # object level
+        new_attributes["shipmentItems"] = new_attributes["shipmentItems"].map do |item|
+          item.attributes.merge(bd["shipmentItems"].find{|i| i["shipmentID"] == item.shipmentID})
+        end
+
         load(new_attributes, true, @persisted)
       end
     end
@@ -94,8 +99,52 @@ shipment_with_pickup_params = {
   },
   "shipmentItems": [
     {
-      "shipmentID": "MYPTC0083",
+      "shipmentID": "MYPTC0090",
       "packageDesc": "Laptop Sleeve",
+      "totalWeight": 500,
+      "totalWeightUOM": "G",
+      "dimensionUOM": "CM",
+      "height": nil,
+      "length": nil,
+      "width": nil,
+      "productCode": "PDO",
+      "codValue": nil,
+      "insuranceValue": nil,
+      "totalValue": 300,
+      "currency": "MYR",
+      "remarks": nil,
+      "isRoutingInfoRequired": "Y",
+      "consigneeAddress": {
+        "companyName": "Sleeve Company",
+        "name": "Sleeve Sdn Bhd",
+        "address1": "No. 3, Jalan Bangsar, Kampung Haji Abdullah Hukum",
+        "address2": nil,
+        "address3": nil,
+        "city": "Kuala Lumpur",
+        "state": "Kuala Lumpur",
+        "district": nil,
+        "country": "MY",
+        "postCode": "59200",
+        "phone": "0169822645",
+        "email": nil
+      },
+      "returnMode": "03",
+      "returnAddress": {
+        "companyName": "Pickup From Company",
+        "name": "Pickup From Name",
+        "address1": "Holistic Pharmacy PostCo, 55, Jalan Landak",
+        "address2": "",
+        "address3": "",
+        "city": " Kuala Lumpur",
+        "state": " Kuala Lumpur",
+        "postCode": "55100",
+        "country": "MY",
+        "phone": "0123456789",
+        "email": "hello@example.com"
+      }
+    },
+    {
+      "shipmentID": "MYPTC0089",
       "totalWeight": 500,
       "totalWeightUOM": "G",
       "dimensionUOM": "CM",
