@@ -3,7 +3,7 @@ module DHLEcommerceAPI
     attr_accessor :client_id, :password, :env, :pickup_account_id, :sold_to_account_id, :env
   end
 
-  PRODUCTION_SITE = "#"
+  PRODUCTION_SITE = "https://api.dhlecommerce.dhl.com"
   PRE_PRODUCTION_SITE = "https://apitest.dhlecommerce.asia"
   SANDBOX_SITE = "https://sandbox.dhlecommerce.asia"
 
